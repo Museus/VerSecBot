@@ -20,9 +20,12 @@ else:
     ENV_FILE = "../../deploy/.env"
 
 
-class PersonalBestsSettings(BaseModel):
+class WatcherSettings(BaseModel):
     enabled: bool
-    channel_id: int
+    channel_id: int | None
+
+
+class PersonalBestsSettings(WatcherSettings):
     emoji_id: int
     create_thread: bool
 

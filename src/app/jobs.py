@@ -4,13 +4,21 @@ from log_util import logger
 import re
 
 from client import client
-from settings import PersonalBestsSettings
+from settings import WatcherSettings, PersonalBestsSettings
 
 
 class Watcher(ABC):
+    def __init__(self, settings: WatcherSettings):
+        self.enabled = settings.enabled
+        self.channel = client.get_channel(settings.channel_id)
+
     @abstractmethod
     def should_act(self, message: Message) -> bool:
-        pass
+        if not self.enabled:
+            return False
+
+        if self.channel and message.channel is not self.channel:
+            return False
 
     @abstractmethod
     def act(self, message: Message):
@@ -29,16 +37,12 @@ class HandlePersonalBest(Watcher):
     EMOTE_PATTERN = re.compile(r"<:(\S+):\d+>")
 
     def __init__(self, settings: PersonalBestsSettings):
-        self.enabled = settings.enabled
+        super().__init__(settings)
         self.emoji = client.get_emoji(settings.emoji_id)
-        self.channel = client.get_channel(settings.channel_id)
         self.create_thread = settings.create_thread
 
     def should_act(self, message: Message) -> bool:
-        if not self.enabled:
-            return False
-
-        if message.channel is not self.channel:
+        if not super().should_act(message):
             return False
 
         if not message.attachments:
