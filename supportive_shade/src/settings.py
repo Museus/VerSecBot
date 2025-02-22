@@ -1,5 +1,6 @@
 from os import getenv
 from typing import Tuple, Type
+from functools import lru_cache
 
 from pydantic import BaseModel
 from pydantic_settings import (
@@ -20,14 +21,18 @@ else:
     ENV_FILE = "../../deploy/.env"
 
 
-class WatcherSettings(BaseModel):
+class PluginSettings(BaseModel):
+    enabled: bool
+
+
+class WatcherSettings(PluginSettings):
     enabled: bool
     channel_id: int | None
 
 
-class PersonalBestsSettings(WatcherSettings):
-    emoji_id: int
-    create_thread: bool
+@lru_cache()
+def get_settings() -> "Settings":
+    return Settings()
 
 
 class Settings(BaseSettings):
@@ -40,7 +45,7 @@ class Settings(BaseSettings):
     )
 
     api_token: str
-    personal_bests: list[PersonalBestsSettings]
+    plugins: dict[str, PluginSettings]
 
     @classmethod
     def settings_customise_sources(

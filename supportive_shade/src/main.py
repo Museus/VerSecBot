@@ -1,12 +1,15 @@
 from discord import Message
 
 from client import client
-from jobs import Watcher, HandlePersonalBest
+from jobs import Watcher, registry
 from log_util import logger
-from settings import settings
+from settings import get_settings
 
+from .plugins.personal_bests import HandlePersonalBest
 
 hooks: list[Watcher] = []
+
+settings = get_settings()
 
 
 @client.event
@@ -45,5 +48,8 @@ async def on_message(message: Message):
         if hook.should_act(message):
             await hook.act(message)
 
+
+print(settings)
+print(registry)
 
 client.run(token=settings.api_token)

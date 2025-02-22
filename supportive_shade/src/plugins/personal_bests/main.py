@@ -1,31 +1,10 @@
-from abc import ABC, abstractmethod
 from discord import Emoji, Message, TextChannel
-from log_util import logger
 import re
 
-from client import client
-from settings import WatcherSettings, PersonalBestsSettings
+from src.jobs import Watcher
 
-
-class Watcher(ABC):
-    def __init__(self, settings: WatcherSettings):
-        self.enabled = settings.enabled
-        self.channel = client.get_channel(settings.channel_id)
-
-    @abstractmethod
-    def should_act(self, message: Message) -> bool:
-        if not self.enabled:
-            return False
-
-        if self.channel and message.channel is not self.channel:
-            return False
-
-    @abstractmethod
-    def act(self, message: Message):
-        if not self.should_act(message):
-            return
-
-        pass
+from .settings import HandlePersonalBestSettings
+from .logging import logger
 
 
 class HandlePersonalBest(Watcher):
@@ -36,7 +15,7 @@ class HandlePersonalBest(Watcher):
 
     EMOTE_PATTERN = re.compile(r"<:(\S+):\d+>")
 
-    def __init__(self, settings: PersonalBestsSettings):
+    def __init__(self, client, settings: HandlePersonalBestSettings):
         super().__init__(settings)
         self.emoji = client.get_emoji(settings.emoji_id)
         self.create_thread = settings.create_thread
