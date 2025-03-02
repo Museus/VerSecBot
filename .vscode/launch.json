@@ -9,7 +9,7 @@
             "type": "debugpy",
             "request": "launch",
             "envFile": "${workspaceFolder}/deploy/.env",
-            "cwd": "${workspaceFolder}/src/app",
+            "cwd": "${workspaceFolder}/src",
             "program": "main.py",
             "console": "integratedTerminal"
         }

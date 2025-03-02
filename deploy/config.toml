@@ -1,14 +1,8 @@
 [plugins.personal_bests]
-enabled = true
+    enabled = true
 
-[[plugins.personal_bests.handlers]]
-enabled = true
-channel_id = 0
-emoji_id = 0
-create_thread = true
-
-[[plugins.personal_bests.handlers]]
-enabled = true
-channel_id = 0
-emoji_id = 0
-create_thread = true
+    [[plugins.personal_bests.handlers]]
+        enabled = true
+        channel_id = 0
+        emoji_id = 0
+        create_thread = true

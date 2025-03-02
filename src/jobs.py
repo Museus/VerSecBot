@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from discord import Message
 from typing import Type
 
-from .client import client
-from .settings import WatcherSettings, PluginSettings
+from client import client
+from settings import WatcherSettings, PluginSettings
 
 
 class Plugin(ABC):
@@ -38,10 +38,10 @@ class Watcher(ABC):
 
 class PluginRegistry:
     def __init__(self):
-        self.plugins: dict[str, Plugin] = []
+        self.plugins: dict[str, Plugin] = {}
 
     def register(self, plugin: Plugin):
-        self.plugins[plugin.name] = plugin
+        self.plugins[plugin.name] = plugin()
 
 
 registry = PluginRegistry()

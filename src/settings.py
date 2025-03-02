@@ -17,11 +17,12 @@ if IS_CONTAINER:
     CONFIG_FILE = "/app/config.toml"
     ENV_FILE = "/app/.env"
 else:
-    CONFIG_FILE = "../../deploy/config.toml"
-    ENV_FILE = "../../deploy/.env"
+    CONFIG_FILE = "../deploy/config.toml"
+    ENV_FILE = "../deploy/.env"
 
 
 class PluginSettings(BaseModel):
+    model_config = SettingsConfigDict(extra="allow")
     enabled: bool
 
 

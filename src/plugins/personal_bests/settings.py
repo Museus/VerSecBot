@@ -1,4 +1,4 @@
-from src.settings import PluginSettings, WatcherSettings
+from settings import PluginSettings, WatcherSettings
 
 
 class HandlerSettings(WatcherSettings):
