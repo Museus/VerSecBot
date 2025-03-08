@@ -14,6 +14,9 @@ class Plugin(ABC):
         super().__init_subclass__()
         registry.register(cls)
 
+    def initialize(self, *args, **kwargs):
+        """This method is called when the bot is starting up. Use this to set up any necessary state."""
+
 
 class Watcher(ABC):
     def __init__(self, settings: WatcherSettings):
@@ -28,12 +31,12 @@ class Watcher(ABC):
         if self.channel and message.channel is not self.channel:
             return False
 
+        return True
+
     @abstractmethod
     def act(self, message: Message):
         if not self.should_act(message):
             return
-
-        pass
 
 
 class PluginRegistry:

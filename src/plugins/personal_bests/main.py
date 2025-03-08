@@ -1,4 +1,4 @@
-from discord import Emoji, Message, TextChannel
+from discord import Client, Emoji, Message, TextChannel
 import re
 
 from jobs import Watcher
@@ -15,7 +15,7 @@ class HandlePersonalBest(Watcher):
 
     EMOTE_PATTERN = re.compile(r"<:(\S+):\d+>")
 
-    def __init__(self, client, settings: HandlerSettings):
+    def __init__(self, client: Client, settings: HandlerSettings):
         super().__init__(settings)
         self.emoji = client.get_emoji(settings.emoji_id)
         self.create_thread = settings.create_thread
