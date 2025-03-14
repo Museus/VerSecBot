@@ -11,14 +11,15 @@ message_handlers: list[Watcher] = []
 
 settings = get_settings()
 
-for plugin in registry.plugins.values():
-    plugin.initialize(settings.plugins[plugin.name], client)
-    message_handlers.extend(plugin.on_message)
-
 
 @client.event
 async def on_ready():
     logger.info(f"We have logged in as {client.user}")
+    logger.info("Initializing plugins...")
+
+    for plugin in registry.plugins.values():
+        plugin.initialize(settings.plugins[plugin.name], client)
+        message_handlers.extend(plugin.on_message)
 
 
 @client.event
@@ -31,4 +32,4 @@ async def on_message(message: Message):
             await hook.act(message)
 
 
-client.run(token=settings.api_token)
+client.run(token=settings.api_token, log_handler=None)

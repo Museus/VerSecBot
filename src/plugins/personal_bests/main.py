@@ -16,8 +16,9 @@ class HandlePersonalBest(Watcher):
     EMOTE_PATTERN = re.compile(r"<:(\S+):\d+>")
 
     def __init__(self, client: Client, settings: HandlerSettings):
-        super().__init__(settings)
-        self.emoji = client.get_emoji(settings.emoji_id)
+        super().__init__(settings, logger=logger)
+        logger.debug("Getting emoji with id %s", settings.emoji_id)
+        self.emoji = client.get_emoji(int(settings.emoji_id))
         self.create_thread = settings.create_thread
 
     def should_act(self, message: Message) -> bool:
@@ -33,11 +34,16 @@ class HandlePersonalBest(Watcher):
         )
 
     async def act(self, message: Message):
-        logger.debug("[HandlePersonalBest] Reacting to %s", message.id)
+        logger.info(
+            "Handling message %s from %s <%s>",
+            message.id,
+            message.author.name,
+            message.author.id,
+        )
+        logger.debug("[%s] Adding reaction.", message.id)
         await message.add_reaction(self.emoji)
 
         if self.create_thread:
-            logger.debug("[HandlePersonalBest] Creating a thread!")
             if message.content:
                 thread_title = message.content
 
@@ -55,4 +61,7 @@ class HandlePersonalBest(Watcher):
             else:
                 thread_title = f"Discuss {message.author}'s PB here!"
 
+            logger.debug(
+                "[%s] Creating thread with title %s.", message.id, thread_title
+            )
             await message.create_thread(name=thread_title)

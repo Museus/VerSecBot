@@ -3,6 +3,7 @@ from discord import Message
 from typing import Type
 
 from client import client
+from log_util import logger as root_logger
 from settings import WatcherSettings, PluginSettings
 
 
@@ -19,9 +20,12 @@ class Plugin(ABC):
 
 
 class Watcher(ABC):
-    def __init__(self, settings: WatcherSettings):
+    def __init__(self, settings: WatcherSettings, **kwargs):
+        logger = kwargs.get("logger", root_logger)
         self.enabled = settings.enabled
+        logger.debug("Getting channel with id %s", settings.channel_id)
         self.channel = client.get_channel(settings.channel_id)
+        print(self.channel)
 
     @abstractmethod
     def should_act(self, message: Message) -> bool:
