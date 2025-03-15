@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from discord import Message
 from typing import Type
 
-from client import client
-from log_util import logger as root_logger
-from settings import WatcherSettings, PluginSettings
+from .client import client
+from .log_util import logger as root_logger
+from .settings import WatcherSettings, PluginSettings
 
 
 class Plugin(ABC):

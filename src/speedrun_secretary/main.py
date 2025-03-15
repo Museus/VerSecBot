@@ -1,11 +1,15 @@
 from discord import Message
 
-from client import client
-from jobs import Watcher, registry
-from log_util import logger
-from settings import get_settings
+from .client import client
+from .jobs import Watcher, registry
+from .log_util import logger
+from .settings import get_settings
 
-from plugins.personal_bests import HandlePersonalBestsPlugin
+from importlib.metadata import entry_points
+
+discovered_plugins = entry_points(group="srsec.plugins")
+for plugin in discovered_plugins:
+    plugin.load()
 
 message_handlers: list[Watcher] = []
 
