@@ -23,16 +23,17 @@ class Watcher(ABC):
     def __init__(self, settings: WatcherSettings, **kwargs):
         logger = kwargs.get("logger", root_logger)
         self.enabled = settings.enabled
-        logger.debug("Getting channel with id %s", settings.channel_id)
-        self.channel = client.get_channel(settings.channel_id)
-        print(self.channel)
+
+        if hasattr(settings, "channel_id"):
+            logger.debug("Getting channel with id %s", settings.channel_id)
+            self.channel = client.get_channel(settings.channel_id)
 
     @abstractmethod
     def should_act(self, message: Message) -> bool:
         if not self.enabled:
             return False
 
-        if self.channel and message.channel is not self.channel:
+        if hasattr(self, "channel") and message.channel is not self.channel:
             return False
 
         return True

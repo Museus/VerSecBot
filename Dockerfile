@@ -27,13 +27,13 @@ ARG BUILD_TIMESTAMP="unknown"
 ARG BUILD_VERSION="unknown"
 
 LABEL org.opencontainers.image.created="${BUILD_TIMESTAMP}"
-LABEL org.opencontainers.image.authors="Museus <museus@proton.me>"
+LABEL org.opencontainers.image.authors="Museus <versecbot@museus.dev>"
 LABEL org.opencontainers.image.url=""
 LABEL org.opencontainers.image.documentation=""
-LABEL org.opencontainers.image.source="https://github.com/Museus/SupportiveShade"
+LABEL org.opencontainers.image.source="https://github.com/Museus/VerSecBot"
 LABEL org.opencontainers.image.version="${BUILD_VERSION}"
 LABEL org.opencontainers.image.vendor="Museus"
-LABEL org.opencontainers.image.title="Supportive Shade"
-LABEL org.opencontainers.image.description="An extendable discord bot to manage simple speedrun server flows."
+LABEL org.opencontainers.image.title="VerSecBot"
+LABEL org.opencontainers.image.description="An extendable Discord Bot to manage common moderation tasks."
 
 ENTRYPOINT ["bash", "-c", "./start.sh"]

@@ -1,5 +1,5 @@
 from os import getenv
-from typing import Tuple, Type
+from typing import Tuple, Type, Optional
 from functools import lru_cache
 
 from pydantic import BaseModel
@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     )
 
     api_token: str
-    plugins: dict[str, PluginSettings]
+    plugins: Optional[dict[str, PluginSettings]]
 
     @classmethod
     def settings_customise_sources(

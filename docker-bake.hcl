@@ -43,8 +43,8 @@ target "bot" {
     BUILD_TIMESTAMP="${BUILD_TIMESTAMP}",
   }
   tags = [
-    "ghcr.io/museus/supportiveshade:${COMMIT_TAG}",
-    "ghcr.io/museus/supportiveshade:${VERSION_TAG}",
-    "ghcr.io/museus/supportiveshade:${LATEST_TAG}",
+    "ghcr.io/museus/versecbot:${COMMIT_TAG}",
+    "ghcr.io/museus/versecbot:${VERSION_TAG}",
+    "ghcr.io/museus/versecbot:${LATEST_TAG}",
   ]
 }

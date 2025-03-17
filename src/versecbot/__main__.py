@@ -7,7 +7,7 @@ from .settings import get_settings
 
 from importlib.metadata import entry_points
 
-discovered_plugins = entry_points(group="srsec.plugins")
+discovered_plugins = entry_points(group="versecbot.plugins")
 for plugin in discovered_plugins:
     plugin.load()
 
@@ -22,6 +22,12 @@ async def on_ready():
     logger.info("Initializing plugins...")
 
     for plugin in registry.plugins.values():
+        plugin_settings = settings.plugins.get(plugin.name)
+        if plugin_settings is None:
+            logger.warning(
+                f"Plugin {plugin.name} is not configured. Add a section to the config file to enable it."
+            )
+            continue
         plugin.initialize(settings.plugins[plugin.name], client)
         message_handlers.extend(plugin.on_message)
 
