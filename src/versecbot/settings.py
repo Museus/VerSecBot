@@ -64,6 +64,3 @@ class Settings(BaseSettings):
             file_secret_settings,
             TomlConfigSettingsSource(settings_cls),
         )
-
-
-settings = Settings()
