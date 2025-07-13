@@ -2,7 +2,6 @@ from os import getenv
 from typing import Tuple, Type, Optional
 from functools import lru_cache
 
-from pydantic import BaseModel
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -19,16 +18,6 @@ if IS_CONTAINER:
 else:
     CONFIG_FILE = "../deploy/config.toml"
     ENV_FILE = "../deploy/.env"
-
-
-class PluginSettings(BaseModel):
-    model_config = SettingsConfigDict(extra="allow")
-    enabled: bool
-
-
-class WatcherSettings(PluginSettings):
-    enabled: bool
-    channel_id: int | None
 
 
 @lru_cache()
