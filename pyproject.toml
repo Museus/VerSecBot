@@ -19,7 +19,7 @@
   dependencies = [
     "discord-py>=2,<3",
     "pydantic_settings>=2,<3",
-    "versecbot_interface@git+https://github.com/Museus/versecbot-interface/releases/download/v0.1/versecbot_interface-0.1-py3-none-any.whl",
+    "versecbot_interface@git+https://github.com/Museus/versecbot-interface.git@v0.2",
   ]
 
   license = "MIT"

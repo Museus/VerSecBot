@@ -1,17 +1,22 @@
+from importlib.metadata import entry_points
+
 from discord import Message
+from versecbot_interface import Watcher, PluginRegistry
 
 from .client import client
-from ....interface.jobs import Watcher, registry
 from .log_util import logger
 from .settings import get_settings
 
-from importlib.metadata import entry_points
+
+registry = PluginRegistry()
+
+plugins = ["smile_back", "personal_bests"]
 
 discovered_plugins = entry_points(group="versecbot.plugins")
-for plugin in discovered_plugins:
-    plugin.load()
+for plugin in (p for p in discovered_plugins if p.name in plugins):
+    loaded = plugin.load()
+    registry.register(loaded)
 
-message_handlers: list[Watcher] = []
 
 settings = get_settings()
 
@@ -29,7 +34,6 @@ async def on_ready():
             )
             continue
         plugin.initialize(settings.plugins[plugin.name], client)
-        message_handlers.extend(plugin.on_message)
 
 
 @client.event
@@ -37,9 +41,10 @@ async def on_message(message: Message):
     if message.author == client.user:
         return
 
-    for hook in message_handlers:
-        if hook.should_act(message):
-            await hook.act(message)
+    for plugin in registry.plugins.values():
+        for hook in plugin.get_watchers():
+            if hook.should_act(message):
+                await hook.act(message)
 
 
 client.run(token=settings.api_token, log_handler=None)

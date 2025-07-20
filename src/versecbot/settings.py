@@ -8,6 +8,7 @@ from pydantic_settings import (
     SettingsConfigDict,
     TomlConfigSettingsSource,
 )
+from versecbot_interface import PluginSettings
 
 
 IS_CONTAINER = getenv("IS_CONTAINER", False)
@@ -29,7 +30,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
         env_file_encoding="utf-8",
-        env_prefix="bot_",
+        env_prefix="versecbot_",
         extra="ignore",
         toml_file=CONFIG_FILE,
     )
