@@ -4,22 +4,22 @@ group "default" {
 
 variable "BUILD_VERSION" {
   # Provide with `git describe --tags`
-  default="Unknown"
+  default= "Unknown"
 }
 
 variable "COMMIT_SHA" {
   # Provide with `git rev-parse HEAD`
-  default="Unknown"
+  default= "Unknown"
 }
 
 variable "BUILD_TIMESTAMP" {
   # Provide with `date --rfc-3339='seconds' --utc`
-  default="Unknown"
+  default= "Unknown"
 }
 
 variable "BRANCH_NAME" {
   # Provide with `git rev-parse --abbrev-ref HEAD`
-  default="Unknown"
+  default= "Unknown"
 }
 
 variable "COMMIT_TAG" {
@@ -27,7 +27,7 @@ variable "COMMIT_TAG" {
 }
 
 variable "VERSION_TAG" {
-      default = BRANCH_NAME == "main" ? "${BUILD_VERSION}" : "${BRANCH_NAME}-${BUILD_VERSION}"
+  default = BRANCH_NAME == "main" ? "${BUILD_VERSION}" : "${BRANCH_NAME}-${BUILD_VERSION}"
 }
 
 variable "LATEST_TAG" {
@@ -35,7 +35,7 @@ variable "LATEST_TAG" {
 }
 
 target "bot" {
-  context = "src"
+  context = "."
   dockerfile = "Dockerfile"
   args = {
     BRANCH_NAME="${BRANCH_NAME}",

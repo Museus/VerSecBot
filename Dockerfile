@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # Use Bash as shell
 SHELL ["/bin/bash", "-c"]
@@ -6,21 +6,29 @@ SHELL ["/bin/bash", "-c"]
 # silence Dialog TERM not set errors in apt-get install
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git
+
 # Set Containerized environment variable for conditional behavior in application
 ENV IS_CONTAINER=true
 
+# Set context for entrypoint
+WORKDIR /app
+
+# Copy application files
+COPY ./pyproject.toml /app/pyproject.toml
+COPY ./README.md /app/README.md
+COPY ./LICENSE.md /app/LICENSE.md
+COPY ./src/versecbot /app/versecbot
+COPY ./src/start.sh /app/start.sh
+
 # Install all Python requirements
-COPY ./python-requirements.txt ./python-requirements.txt
 RUN python3 -m venv venv && \
     source venv/bin/activate && \
     pip install --upgrade pip && \
-    pip install --ignore-installed -r python-requirements.txt
-
-# Copy application
-COPY ./app /app
-
-# Set context for entrypoint
-WORKDIR /app
+    pip install --ignore-installed .
 
 # Set metadata as specified by https://github.com/opencontainers/image-spec/blob/main/annotations.md
 ARG BUILD_TIMESTAMP="unknown"
