@@ -29,9 +29,9 @@ async def on_ready():
     logger.info(registry.plugins)
 
     for plugin in registry.plugins.values():
-        logger.info("Initializing plugin: %s", plugin.name)
+        logger.debug("Initializing plugin: %s", plugin.name)
         plugin_settings = settings.plugins.get(plugin.name)
-        logger.info("Plugin settings: %s", str(plugin_settings))
+        logger.debug("Plugin settings: %s", str(plugin_settings))
         if plugin_settings is None:
             logger.warning(
                 f"Plugin {plugin.name} is not configured. Add a section to the config file to enable it."

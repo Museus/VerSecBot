@@ -11,14 +11,24 @@ from pydantic_settings import (
 from versecbot_interface import PluginSettings
 
 
-IS_CONTAINER = getenv("IS_CONTAINER", False)
+DEFAULT_CONFIG_FILE_PATHS = {"container": "/app/config.toml", "local": "./config.toml"}
+DEFAULT_ENV_FILE_PATHS = {"container": "/app/.env", "local": "./.env"}
 
-if IS_CONTAINER:
-    CONFIG_FILE = "/app/config.toml"
-    ENV_FILE = "/app/.env"
-else:
-    CONFIG_FILE = "../deploy/config.toml"
-    ENV_FILE = "../deploy/.env"
+
+def get_config_path() -> str:
+    if specified_path := getenv("VERSECBOT_CONFIG_PATH", None):
+        return specified_path
+
+    deploy_env = "container" if getenv("IS_CONTAINER", False) else "local"
+    return DEFAULT_CONFIG_FILE_PATHS[deploy_env]
+
+
+def get_env_path() -> str:
+    if specified_path := getenv("VERSECBOT_ENV_PATH", None):
+        return specified_path
+
+    deploy_env = "container" if getenv("IS_CONTAINER", False) else "local"
+    return DEFAULT_ENV_FILE_PATHS[deploy_env]
 
 
 @lru_cache()
@@ -28,11 +38,11 @@ def get_settings() -> "Settings":
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=ENV_FILE,
+        env_file=get_env_path(),
         env_file_encoding="utf-8",
         env_prefix="versecbot_",
         extra="ignore",
-        toml_file=CONFIG_FILE,
+        toml_file=get_config_path(),
     )
 
     api_token: str
