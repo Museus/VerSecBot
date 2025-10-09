@@ -1,4 +1,4 @@
-from importlib.metadata import entry_points, distributions
+from importlib.metadata import entry_points
 from logging import getLogger, StreamHandler
 
 from discord import Message
@@ -26,18 +26,18 @@ settings = get_settings()
 async def on_ready():
     logger.info(f"We have logged in as {client.user}")
     logger.info("Initializing plugins...")
-    logger.info(registry.plugins)
+    logger.debug("Plugins to register: %s", ", ".join(registry.plugins.keys()))
 
     for plugin in registry.plugins.values():
-        logger.debug("Initializing plugin: %s", plugin.name)
+        logger.debug("Loading settings for plugin: %s", plugin.name)
         plugin_settings = settings.plugins.get(plugin.name)
-        logger.debug("Plugin settings: %s", str(plugin_settings))
         if plugin_settings is None:
             logger.warning(
-                f"Plugin {plugin.name} is not configured. Add a section to the config file to enable it."
+                f"Plugin {plugin.name} is not configured. It will not be initialized. Add a section to the config file to enable it."
             )
             continue
-        logger.info("Calling initialize")
+
+        logger.debug("Initializing plugin: %s", plugin.name)
         plugin.initialize(settings.plugins[plugin.name], client)
 
 
@@ -51,8 +51,5 @@ async def on_message(message: Message):
             if hook.should_act(message):
                 await hook.act(message)
 
-
-for entry_point in entry_points():
-    print(entry_point)
 
 client.run(token=settings.api_token, log_handler=StreamHandler(), log_level="INFO")
