@@ -34,7 +34,7 @@ tasks:
       - echo ''
       - task: _require_sudo
       - printf 'Building {{ .BRANCH_NAME }}-{{ .VERSION }} at {{ .TIMESTAMP }}\n\n'
-      - sudo BRANCH_NAME="{{ .BRANCH_NAME }}" COMMIT_SHA="{{ .COMMIT_SHA }}" BUILD_TIMESTAMP="{{ .TIMESTAMP }}" BUILD_VERSION="{{ .VERSION }}" docker buildx bake
+      - sudo BRANCH_NAME="{{ .BRANCH_NAME }}" COMMIT_SHA="{{ .COMMIT_SHA }}" BUILD_TIMESTAMP="{{ .TIMESTAMP }}" BUILD_VERSION="{{ .VERSION }}" docker build -t "ghcr.io/museus/versecbot:{{ .BRANCH_NAME }}-latest" -t "ghcr.io/museus/versecbot:{{ .BRANCH_NAME }}-{{ .COMMIT_SHA }}" .
     silent: true
 
   push:
@@ -56,3 +56,14 @@ tasks:
     dir: deploy
     cmds:
       - sudo BUILD_VERSION="{{ .VERSION }}" docker compose up
+
+  localbuild:
+    dir: .
+    cmds:
+      - python3 -m build && python3 -m pip install --force-reinstall dist/versecbot-0.2-py3-none-any.whl
+
+  localrun:
+    deps: [localbuild]
+    dir: src
+    cmds:
+      - python3 -m versecbot
