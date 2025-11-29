@@ -1,25 +1,31 @@
 from importlib.metadata import entry_points
 from logging import getLogger, StreamHandler
 
-from discord import Message
-from versecbot_interface import PluginRegistry
+from discord import Message, RawReactionActionEvent
+from versecbot_interface import PluginRegistry, Plugin
 
-from versecbot.client import client
+from versecbot.client import discord_client
 from versecbot.settings import get_settings
+from versecbot.util import process_reaction
 
 logger = getLogger("discord").getChild("versecbot")
 
 registry = PluginRegistry()
 
-
+all_intents = set()
 discovered_plugins = entry_points(group="versecbot.plugins")
 for plugin in discovered_plugins:
     logger.info(f"Discovered plugin: {plugin.name}")
-    loaded = plugin.load()
+    loaded: Plugin = plugin.load()
+    for intent in loaded.intents:
+        all_intents.add(intent)
+
     registry.register(loaded)
 
-
 settings = get_settings()
+
+discord_client.initialize(all_intents)
+client = discord_client.client
 
 
 @client.event
@@ -52,4 +58,20 @@ async def on_message(message: Message):
                 await hook.act(message)
 
 
-client.run(token=settings.api_token, log_handler=StreamHandler(), log_level="INFO")
+@client.event
+async def on_raw_reaction_add(reaction_event: RawReactionActionEvent):
+    logger.debug("Reaction being processed...")
+
+    user = client.get_user(reaction_event.user_id)
+    if user == client.user:
+        return
+
+    for plugin in registry.plugins.values():
+        for hook in plugin.get_reaction_watchers():
+            logger.debug("Reaction being processed by %s", hook.name)
+            reaction = await process_reaction(reaction_event, client)
+            if hook.should_act(reaction):
+                await hook.act(reaction)
+
+
+client.run(token=settings.api_token, log_handler=StreamHandler(), log_level="DEBUG")
