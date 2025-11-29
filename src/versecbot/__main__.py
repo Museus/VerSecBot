@@ -1,5 +1,6 @@
 from importlib.metadata import entry_points
 from logging import getLogger, StreamHandler
+from os import getenv
 
 from discord import Message, RawReactionActionEvent
 from versecbot_interface import PluginRegistry, Plugin
@@ -8,6 +9,7 @@ from versecbot.client import discord_client
 from versecbot.settings import get_settings
 from versecbot.util import process_reaction
 
+logging_level = getenv("VERSECBOT_LOG_LEVEL", "INFO")
 logger = getLogger("discord").getChild("versecbot")
 
 registry = PluginRegistry()
@@ -53,7 +55,7 @@ async def on_message(message: Message):
         return
 
     for plugin in registry.plugins.values():
-        for hook in plugin.get_watchers():
+        for hook in plugin.get_message_watchers():
             if hook.should_act(message):
                 await hook.act(message)
 
@@ -74,4 +76,6 @@ async def on_raw_reaction_add(reaction_event: RawReactionActionEvent):
                 await hook.act(reaction)
 
 
-client.run(token=settings.api_token, log_handler=StreamHandler(), log_level="DEBUG")
+client.run(
+    token=settings.api_token, log_handler=StreamHandler(), log_level=logging_level
+)
