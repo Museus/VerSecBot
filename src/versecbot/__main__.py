@@ -68,10 +68,11 @@ async def on_raw_reaction_add(reaction_event: RawReactionActionEvent):
     if user == client.user:
         return
 
+    reaction = await process_reaction(reaction_event, client)
+
     for plugin in registry.plugins.values():
         for hook in plugin.get_reaction_watchers():
             logger.debug("Reaction being processed by %s", hook.name)
-            reaction = await process_reaction(reaction_event, client)
             if hook.should_act(reaction):
                 await hook.act(reaction)
 
